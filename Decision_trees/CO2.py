@@ -12,7 +12,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.base import BaseEstimator, ClassifierMixin
 #
 #
-#
 class CO2Node:                                                      # defining the CO2 Node
 
     def __init__(self, depth, labels, **kwargs):

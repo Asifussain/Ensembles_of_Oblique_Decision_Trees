@@ -9,11 +9,13 @@
 import numpy as np
 import tensorflow as tf
 from neural_network_decision_tree import nn_decision_tree
+
+tf.compat.v1.disable_eager_execution()
 #
 # Setting the random seed
 #
 np.random.seed(1943)
-tf.set_random_seed(1943)
+tf.compat.v1.set_random_seed(1943)
 
 def random1(x):
     x1=np.random.choice(x,len(x))
@@ -38,14 +40,14 @@ def dndt_predict(train_X, test_X, train_Y, num_class, num_cut, num_leaf, n_bag):
     #
     #
     d = train_X.shape[1]
-    sess = tf.InteractiveSession()
-    x_ph = tf.placeholder(tf.float32, [None, d])
-    y_ph = tf.placeholder(tf.float32, [None, num_class])
-    cut_points_list = [tf.Variable(tf.random_uniform([i])) for i in num_cut]
-    leaf_score = tf.Variable(tf.random_uniform([num_leaf, num_class]))
+    sess = tf.compat.v1.InteractiveSession()
+    x_ph = tf.compat.v1.placeholder(tf.float32, [None, d])
+    y_ph = tf.compat.v1.placeholder(tf.float32, [None, num_class])
+    cut_points_list = [tf.Variable(tf.random.uniform([i])) for i in num_cut]
+    leaf_score = tf.Variable(tf.random.uniform([num_leaf, num_class]))
     y_pred = nn_decision_tree(x_ph, cut_points_list, leaf_score, temperature=0.1)
-    loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits=y_pred, onehot_labels=y_ph))
-    opt = tf.train.AdamOptimizer(0.1)
+    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_pred, labels=y_ph))
+    opt = tf.compat.v1.train.AdamOptimizer(0.1)
     train_step = opt.minimize(loss)
     sess.run(tf.global_variables_initializer())
     x_example = []
